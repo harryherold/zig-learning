@@ -208,4 +208,40 @@ test "test ascii to upper" {
     expect(asciiToUpper('A') == 'A');
 }
 
-// Next pointers
+fn increment(val: *u8) void {
+    val.* += 1;    
+}
+
+test "increment using pointer" {
+    var val: u8 = 41;
+    increment(&val);
+    expect(val == 42);
+}
+
+test "reference to other values" {
+    // const x: u8 = 41;
+    // discarding constness is an error
+    var x: u8 = 41;
+    var xp: *u8 = &x;
+    xp.* += 1;
+    expect(xp.* == 42);
+    expect(x == 42);
+}
+
+fn total(values: []const u8) usize {
+    var count: u8 = 0;
+    for(values) |v| {
+        count += v;
+    }
+    return count;
+}
+
+test "test sum" {
+    const v1 = [_]u8{1, 2, 3, 4, 5};
+    const slice = v1[0..2];
+    expect(@TypeOf(slice) == *const [2]u8);
+    const s1 = total(slice);
+    expect(s1 == 3);
+
+    expect(total(v1[2..]) == 12);
+}
